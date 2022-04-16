@@ -14,6 +14,12 @@
     2. Unpair first when changes are made (true for non-beta)
     3. Hold boot button when uploading to esp32 (rewired to a switch for ease)
     4. Using pin 12 causes it to not flash (remove first then flash)
+    5. space hex is 0x20
+
+    Modes:
+    1 - regular unique keys
+    2 - limited 5 sec config mode
+    3 - keyboard mode (reverse everything)
 
  */
 
@@ -105,6 +111,14 @@ AiEsp32RotaryEncoder rotaryEncoder2 = AiEsp32RotaryEncoder(ROTARY_ENCODER_C_PIN,
 AiEsp32RotaryEncoder rotaryEncoder3 = AiEsp32RotaryEncoder(ROTARY_ENCODER_E_PIN, ROTARY_ENCODER_F_PIN, ROTARY_ENCODER_BUTTON_PIN3, ROTARY_ENCODER_VCC_PIN, ROTARY_ENCODER_STEPS);
 unsigned long Time1;
 
+void pressRelease1(uint16_t key, bool press) {
+  if(press) {
+    bleKeyboard.press(key);
+  } else {
+    bleKeyboard.release(key);            
+  }
+}
+
 void pressRelease(uint8_t key, bool press) {
   if(press) {
     bleKeyboard.press(key);
@@ -127,85 +141,155 @@ void sendKey(char key, bool press) {
   
   switch(key) {
     case '1':
-      pressRelease(KEY_F13, press);
+      if(mode == 1) {                
+        pressRelease(KEY_F13, press);
+      } else if (mode == 3) {
+        pressRelease1(0x20, press);        
+      }
+
       break;
     case '2':
-      pressRelease(KEY_F14, press);    
+      if(mode == 1) {                
+        pressRelease(KEY_F14, press);    
+      } else if (mode == 3) {
+        pressRelease('c', press);        
+      }      
       // bleKeyboard.write(KEY_F14);
       break;
     case '3':
-      pressRelease(KEY_F15, press);    
+      if(mode == 1) {                        
+        pressRelease(KEY_F15, press);    
+      } else if (mode == 3) {
+        pressRelease('x', press);        
+      }   
       // bleKeyboard.write(KEY_F15);
       break;
     case '4':
-      pressRelease(KEY_F17, press); 
+      if(mode == 1) {                        
+        pressRelease(KEY_F17, press);   
+      } else if (mode == 3) {
+        pressRelease('z', press);        
+      }        
       // bleKeyboard.write(KEY_F17);
       break;
     case '5':
-      pressRelease(KEY_F24, press); 
+      if(mode == 1) {                                
+        pressRelease(KEY_F24, press); 
+      } else if (mode == 3) {
+        pressRelease('f', press);        
+      }  
       // bleKeyboard.write(KEY_F24);
       break;
     case '6':
       // pressRelease(KEY_MEDIA_WWW_BOOKMARKS, press); 
-      bleKeyboard.write(KEY_MEDIA_WWW_BOOKMARKS);
+      if(mode == 1) {        
+        bleKeyboard.write(KEY_MEDIA_WWW_BOOKMARKS);
+      } else if (mode == 3) {
+        pressRelease('d', press);
+      }
       break;
     case '7':
-      pressRelease(KEY_F23, press);
+      if(mode == 1) {
+        pressRelease(KEY_F23, press);
+      } else if (mode == 3) {
+        pressRelease('s', press);
+      }
+      
       // bleKeyboard.write(KEY_F23);
       break;
     case '8':
-      pressRelease(KEY_F20, press);
+      if(mode == 1) {
+        pressRelease(KEY_F20, press);
+      } else if (mode == 3) {
+        pressRelease('a', press);
+      }
       // bleKeyboard.write(KEY_F20);
       break;
     case '9':    
       // Serial.print("9");  
-      bleKeyboard.press(KEY_LEFT_CTRL);
-      bleKeyboard.press(KEY_LEFT_ALT);
-      bleKeyboard.press(KEY_F2);
-      delay(100);       
-      bleKeyboard.release(KEY_LEFT_CTRL);
-      bleKeyboard.release(KEY_LEFT_ALT);      
-      bleKeyboard.release(KEY_F2);      
+      if(mode == 1) {
+        bleKeyboard.press(KEY_LEFT_CTRL);
+        bleKeyboard.press(KEY_LEFT_ALT);
+        bleKeyboard.press(KEY_F2);
+        delay(100);       
+        bleKeyboard.release(KEY_LEFT_CTRL);
+        bleKeyboard.release(KEY_LEFT_ALT);      
+        bleKeyboard.release(KEY_F2);      
+      } else if (mode == 3) {
+        pressRelease('r', press);
+      }
+      
             
       break;
     case 'a':
-      bleKeyboard.press(KEY_LEFT_CTRL);
-      bleKeyboard.press(KEY_LEFT_ALT);
-      bleKeyboard.press(KEY_F3);
-      delay(100);       
-      bleKeyboard.release(KEY_LEFT_CTRL);
-      bleKeyboard.release(KEY_LEFT_ALT);      
-      bleKeyboard.release(KEY_F3);
+      if(mode == 1) {
+        bleKeyboard.press(KEY_LEFT_CTRL);
+        bleKeyboard.press(KEY_LEFT_ALT);
+        bleKeyboard.press(KEY_F3);
+        delay(100);       
+        bleKeyboard.release(KEY_LEFT_CTRL);
+        bleKeyboard.release(KEY_LEFT_ALT);      
+        bleKeyboard.release(KEY_F3);    
+      } else if (mode == 3) {
+        pressRelease('e', press);
+      }
+      
       break;
     case 'b':
-      bleKeyboard.press(KEY_LEFT_CTRL);
-      bleKeyboard.press(KEY_LEFT_ALT);
-      bleKeyboard.press(KEY_F4);
-      delay(100);       
-      bleKeyboard.release(KEY_LEFT_CTRL);
-      bleKeyboard.release(KEY_LEFT_ALT);      
-      bleKeyboard.release(KEY_F4);
+      if(mode == 1) {
+        bleKeyboard.press(KEY_LEFT_CTRL);
+        bleKeyboard.press(KEY_LEFT_ALT);
+        bleKeyboard.press(KEY_F4);
+        delay(100);       
+        bleKeyboard.release(KEY_LEFT_CTRL);
+        bleKeyboard.release(KEY_LEFT_ALT);      
+        bleKeyboard.release(KEY_F4);
+      } else if (mode == 3) {
+        pressRelease('w', press);
+      }
+     
       break;
     case 'c':
-      bleKeyboard.press(KEY_LEFT_CTRL);
-      bleKeyboard.press(KEY_LEFT_ALT);
-      bleKeyboard.press(KEY_F5);
-      delay(100);       
-      bleKeyboard.release(KEY_LEFT_CTRL);
-      bleKeyboard.release(KEY_LEFT_ALT);      
-      bleKeyboard.release(KEY_F5);
+      if(mode == 1) {
+        bleKeyboard.press(KEY_LEFT_CTRL);
+        bleKeyboard.press(KEY_LEFT_ALT);
+        bleKeyboard.press(KEY_F5);
+        delay(100);       
+        bleKeyboard.release(KEY_LEFT_CTRL);
+        bleKeyboard.release(KEY_LEFT_ALT);      
+        bleKeyboard.release(KEY_F5);
+      } else if (mode == 3) {
+        pressRelease('q', press);
+      }
+      
       break;
-    case 'd':      
-      bleKeyboard.write(KEY_MEDIA_PREVIOUS_TRACK);
+    case 'd':   
+      if(mode == 1) {
+        bleKeyboard.write(KEY_MEDIA_PREVIOUS_TRACK);
+      } else if (mode == 3) {
+        pressRelease('g', press);
+      }   
       break;
     case 'e':
-      bleKeyboard.write(KEY_MEDIA_PLAY_PAUSE);
+      if(mode == 1) {
+        bleKeyboard.write(KEY_MEDIA_PLAY_PAUSE);
+      } else if (mode == 3) {
+        pressRelease('v', press);
+      }
       break;
     case 'f':
-      bleKeyboard.write(KEY_MEDIA_NEXT_TRACK);
+      if(mode == 1) {
+        bleKeyboard.write(KEY_MEDIA_NEXT_TRACK);
+      } else if (mode == 3) {
+        pressRelease(KEY_RETURN, press);
+      }
       break;
     case 'g':
-      bleKeyboard.write(KEY_PRTSC);
+      if(mode == 1) {
+        bleKeyboard.write(KEY_PRTSC);
+      } else if (mode == 3) {
+        pressRelease(KEY_ESC, press);
+      }
       break;  
   } 
 }
@@ -248,7 +332,13 @@ void rotary_onButtonClick()
 		return;
 	}
 
-  bleKeyboard.write(KEY_MEDIA_WWW_BACK);
+  if(mode == 2) {    
+    mode = 3;
+    Serial.print("mode ");
+    Serial.println(mode);
+  } else {
+    bleKeyboard.write(KEY_MEDIA_WWW_BACK);
+  }
 }
 
 // third
@@ -261,7 +351,13 @@ void rotary_onButtonClick2()
 		return;
 	}
 
-  bleKeyboard.write(KEY_MEDIA_WWW_STOP);
+  if(mode == 2){
+    mode = 1;
+    Serial.print("mode ");
+    Serial.println(mode);
+  } else {
+    bleKeyboard.write(KEY_MEDIA_WWW_STOP);
+  }
 }
 
 // middle
@@ -296,7 +392,11 @@ void rotary_loop()
   if(pressed) {    
     if (millis() - previousMillis >= 5000) {
       Serial.println("==================");
-      mode = 1;
+
+      // return mode after 5s but for mode 2 only
+      if (mode == 2) {
+        mode = 1;
+      }
       pressed = 0;
       Serial.print("mode ");
       Serial.println(mode);
@@ -323,6 +423,8 @@ void rotary_loop()
         delay(100);       
         bleKeyboard.release(KEY_LEFT_SHIFT);        
         bleKeyboard.release(KEY_F18);
+      } else if(mode == 3) {
+        bleKeyboard.write(KEY_F19);
       }
       
 
@@ -336,6 +438,8 @@ void rotary_loop()
         delay(100);       
         bleKeyboard.release(KEY_LEFT_SHIFT);        
         bleKeyboard.release(KEY_F19);
+      } else if(mode == 3) {
+        bleKeyboard.write(KEY_F18);
       }
       
 
@@ -361,6 +465,8 @@ void rotary_loop()
         delay(100);       
         bleKeyboard.release(KEY_LEFT_SHIFT);        
         bleKeyboard.release(KEY_F21);
+      } else if(mode == 3) {
+        bleKeyboard.write(KEY_F22);
       }
     } else {
       if(mode == 1) {
@@ -372,6 +478,8 @@ void rotary_loop()
         delay(100);       
         bleKeyboard.release(KEY_LEFT_SHIFT);        
         bleKeyboard.release(KEY_F22);
+      } else if(mode == 3) {
+        bleKeyboard.write(KEY_F21);
       }      
     }
 
@@ -398,7 +506,9 @@ void rotary_loop()
         bleKeyboard.release(KEY_LEFT_ALT);      
         bleKeyboard.release('[');
         Serial.println("NOT-");
-      }
+      } else if(mode == 3) {
+        bleKeyboard.write(KEY_MEDIA_VOLUME_UP);
+      } 
       
     } else {
       if(mode == 1) {
@@ -413,7 +523,9 @@ void rotary_loop()
         bleKeyboard.release(KEY_LEFT_ALT);      
         bleKeyboard.release(']');
         Serial.println("NOT+");
-      }
+      } else if(mode == 3) {
+        bleKeyboard.write(KEY_MEDIA_VOLUME_DOWN);
+      } 
     }
 
     prev_val3 = val3;
