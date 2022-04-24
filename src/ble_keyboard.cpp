@@ -264,28 +264,28 @@ void sendKey(char key, bool press) {
       
       break;
     case 'd':   
-      if(mode == 1) {
+      if(mode == 1 && press) {
         bleKeyboard.write(KEY_MEDIA_PREVIOUS_TRACK);
       } else if (mode == 3) {
         pressRelease('g', press);
       }   
       break;
     case 'e':
-      if(mode == 1) {
+      if(mode == 1 && press) {
         bleKeyboard.write(KEY_MEDIA_PLAY_PAUSE);
       } else if (mode == 3) {
         pressRelease('v', press);
       }
       break;
     case 'f':
-      if(mode == 1) {
+      if(mode == 1 && press) {
         bleKeyboard.write(KEY_MEDIA_NEXT_TRACK);
       } else if (mode == 3) {
         pressRelease(KEY_RETURN, press);
       }
       break;
     case 'g':
-      if(mode == 1) {
+      if(mode == 1 && press) {
         bleKeyboard.write(KEY_PRTSC);
       } else if (mode == 3) {
         pressRelease(KEY_ESC, press);
@@ -336,6 +336,7 @@ void rotary_onButtonClick()
     mode = 3;
     Serial.print("mode ");
     Serial.println(mode);
+    bleKeyboard.write(KEY_MEDIA_WWW_BACK);
   } else {
     bleKeyboard.write(KEY_MEDIA_WWW_BACK);
   }
@@ -355,6 +356,7 @@ void rotary_onButtonClick2()
     mode = 1;
     Serial.print("mode ");
     Serial.println(mode);
+    bleKeyboard.write(KEY_MEDIA_WWW_STOP);
   } else {
     bleKeyboard.write(KEY_MEDIA_WWW_STOP);
   }
